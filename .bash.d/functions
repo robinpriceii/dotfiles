@@ -1,0 +1,94 @@
+## Personal Functions
+
+getIP() {
+	curl -s http://canhazip.com
+}
+
+# lazy man extract - example: ex tarball.tar
+ex() {
+    if [ -f $1 ] ; then
+        case $1 in
+            *.tar.bz2)   tar xjfv $1        ;;
+            *.tar.gz)    tar xzfv $1     ;;
+            *.tar.xz)    tar xJfv $1     ;;
+            *.bz2)       bunzip2 $1       ;;
+            *.rar)       rar x $1     ;;
+            *.gz)        gunzip $1     ;;
+            *.tar)       tar xfv $1        ;;
+            *.tbz2)      tar xjfv $1      ;;
+            *.tgz)       tar xzfv $1       ;;
+            *.zip)       unzip $1     ;;
+            *.Z)         uncompress $1  ;;
+            *.7z)        7z x $1    ;;
+            *)           echo "'$1' cannot be extracted via extract()" ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+# Sanbox applications - Need policycoreutils-sandbox package installed for -X
+sandboxfirefox() {
+	sandbox -X -t sandbox_web_t firefox $1
+
+}
+
+
+# Find the printer driver (ppd) type being used
+printdriver() {
+	lpoptions -d $1 | grep -oe "printer-make-and-model='.*'" | cut -f2 -d "=" | sed -r s/\'//g
+}
+
+# Corporate ldapsearch for users
+ldapfind() {
+	ldapsearch -x -h ldap.rdu.xxxxxx.com -b dc=xxxxxx,dc=com uid~=$1
+}
+
+# Remove an inode via inode number
+rminode() {
+	find . -inum $1 -exec rm -i {} \;
+}
+
+# Get md5sums of all files in current directory.
+md5sumdir() {
+	find * -type f -exec md5sum {} \; &> md5sum.txt && echo "Success: md5sum.txt written" || echo "Error: md5sum.txt not written"
+}
+
+# Record desktop :: ffmpeg hosted via rpmfusion
+# Deprecated for Gnome3 built in .webm shortcut
+# Ctrl+Shift+Alt+R
+#
+record_desktop() {	
+	echo "Begin recording in:" ; sleep 1 ; echo 3 ; sleep 1 ; echo 2 ; sleep 1 ; echo 1 ; ffmpeg -video_size 1920x1080 -framerate 29.97 -f x11grab -i :0.0 -c:v libx264 -qp 0 -preset ultrafast /tmp/out.mkv && echo "Preview with 'mplayer /tmp/out.mpg'"
+}
+#
+#record_desktop() {	
+#	echo "Begin recording in:" ; sleep 1 ; echo 3 ; sleep 1 ; echo 2 ; sleep 1 ; echo 1 ; ffmpeg -f x11grab -s wxga -r 25 -i :0.0  -sameq /tmp/out.mpg && echo "Preview with 'mplayer /tmp/out.mpg'"
+#}
+#
+#record_xvid() {
+#	echo "Begin recording in:" ; sleep 1 ; echo 3 ; sleep 1 ; echo 2 ; sleep 1 ; echo 1 ; xvidcap --file /tmp/out.mpeg --fps 25 --cap_geometry 1920x1080+0+0 --rescale 50 --time 200.0 --start_no 0 --continue yes --gui no --auto && echo "Preview with 'mplayer /tmp/out.mpeg'"
+#}
+
+consoleclock() {
+	while sleep 1;do tput sc;tput cup 0 $(($(tput cols)-29));date;tput rc;done &
+}
+
+findlarge() {
+	find . -type f -size +50000k -exec ls -lh {} \; | awk '{ print $9 ": " $5 }'
+}
+
+
+flopbox() {
+         lftp -e "open -e set ftp:ssl-auth TLS; set ssl:verify-certificate no; mget $1; quit;" rprice@flopbox.corp.xxxxxx.com
+} 
+
+#Dictionary in console
+
+dict() {
+	curl dict://dict.org/d:$1 | head
+}
+
+elinkstest() {
+	elinks -dump -eval 'set connection.ssl.cert_verify = 0' $1
+}
