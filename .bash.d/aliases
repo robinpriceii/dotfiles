@@ -1,0 +1,24 @@
+## Aliases
+alias screensaver='tr -c "[:digit:]" " " < /dev/urandom | dd cbs=$COLUMNS conv=unblock | GREP_COLOR="1;32" grep --color "[^ ]"'
+alias top10='ps -eo pcpu,pid,user,args | sort -k 1 -r | head -10'       # top10 processes being used
+alias mkdir='mkdir -p -v'
+alias ll='ls -lahF --color'     # -F is important for hidden directories such as someone trying to hide files in "..." below "." and ".."
+alias ls='ls -F --color'        # -F is important for hidden directories such as someone trying to hide files in "..." below "." and ".."
+alias rm='rm -i'                # prompt before every removal
+alias cp='cp -iZ'               # prompt before overwrite & keep selinux contexts
+alias mv='mv -iZ'               # prompt before overwrite & keep selinux context
+alias df='df -Th'               # Print filesystem type and human readable values
+alias du='du -h -c'             # Human readable grand total
+alias c='clear'
+alias g='grep --color'
+alias h='history'
+alias t='tail -n 50'
+alias x='exit'
+alias recent='ls -lAt | head'   # Most recent files
+alias grep='grep --color'       # Enable grep to color values when found
+alias mkdir='mkdir -Z'          # http://danwalsh.livejournal.com/67751.html
+alias mknod='mknod -Z'
+alias install='install -Z'
+alias dmesg='dmesg --color'
+alias netdev="tr '|' ' ' < /proc/net/dev | column -t"
+
